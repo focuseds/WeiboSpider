@@ -8,7 +8,7 @@ Created Time: 2020/4/14
 import json
 from scrapy import Spider
 from scrapy.http import Request
-from spiders.common import parse_user_info
+from .common import parse_user_info
 
 
 class UserSpider(Spider):
@@ -23,7 +23,17 @@ class UserSpider(Spider):
         爬虫入口
         """
         # 这里user_ids可替换成实际待采集的数据
-        user_ids = ['1749127163']
+        # user_ids = ['1749127163']
+        user_ids = []
+        with open('weibospider/output/user_info_20230514153401.jsonl', 'r', encoding='UTF-8') as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    id_data = line.split()
+                    for i in id_data:
+                        if i:
+                            user_ids.append(i)
+        print(user_ids)
         urls = [f'https://weibo.com/ajax/profile/info?uid={user_id}' for user_id in user_ids]
         for url in urls:
             yield Request(url, callback=self.parse)
